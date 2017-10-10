@@ -1,0 +1,3 @@
+rootProject.name = 'FrizPlayer'
+
+include ':app'
