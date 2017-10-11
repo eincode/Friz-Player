@@ -56,7 +56,7 @@ public class MusicBrowserModule extends ReactContextBaseJavaModule {
                 String thisArtist = musicCursor.getString(artistColumn);
                 String thisAlbum = musicCursor.getString(albumColumn);
                 long thisDuration = musicCursor.getLong(durationColumn);
-                songs.add(new SongModel(thisId, thisTitle, thisArtist, thisAlbum));
+                songs.add(new SongModel(thisId, thisTitle, thisArtist, thisAlbum, thisDuration));
             } while(musicCursor.moveToNext());
 
             Log.d("WUT", songs.get(0).getTitle());
