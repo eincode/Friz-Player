@@ -33,9 +33,26 @@ const nextSong = () => {
 	})
 }
 
+const previousSong = () => {
+	this.stopSong(() => {
+		this.playSong(--currentIndexPlaying)
+	})
+}
+
+const pause = () => {
+	music.pause()
+}
+
+const release = () => {
+	music.release
+}
+
 module.exports = {
 	initializePlayer,
 	playSong,
 	stopSong,
-	nextSong
+	nextSong,
+	pause,
+	release,
+	previousSong
 }
