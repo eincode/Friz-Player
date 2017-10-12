@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, FlatList } from 'react-native'
+import Sound from 'react-native-sound'
 
 import store from '../services/store'
 import { setRootNavigator } from '../services/action'
@@ -24,6 +25,7 @@ export default class Main extends Component {
 			console.log(json)
 			this.setState({ data: JSON.parse(json) })
 		})
+		Sound.setCategory('Playback')
 	}
 
 	render() {
@@ -64,6 +66,7 @@ export default class Main extends Component {
 										title={item.title}
 										artist={item.artist}
 										albumArt={item.albumArt}
+										path={item.path}
 									/>
 								)
 							}}
