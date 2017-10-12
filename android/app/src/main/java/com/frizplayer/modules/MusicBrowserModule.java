@@ -48,6 +48,7 @@ public class MusicBrowserModule extends ReactContextBaseJavaModule {
             int artistColumn = musicCursor.getColumnIndex(android.provider.MediaStore.Audio.Media.ARTIST);
             int albumColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
             int durationColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            int pathColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
 
             //add songs to list
             do {
@@ -56,7 +57,8 @@ public class MusicBrowserModule extends ReactContextBaseJavaModule {
                 String thisArtist = musicCursor.getString(artistColumn);
                 String thisAlbum = musicCursor.getString(albumColumn);
                 long thisDuration = musicCursor.getLong(durationColumn);
-                songs.add(new SongModel(thisId, thisTitle, thisArtist, thisAlbum, thisDuration));
+                String thisPath = musicCursor.getString(pathColumn);
+                songs.add(new SongModel(thisId, thisTitle, thisArtist, thisAlbum, thisDuration, thisPath));
             } while(musicCursor.moveToNext());
 
             Log.d("WUT", songs.get(0).getTitle());
