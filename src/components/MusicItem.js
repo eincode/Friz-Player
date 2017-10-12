@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { View, Image, Text, StyleSheet } from 'react-native'
+import { TouchableOpacity, Image, Text, StyleSheet, View } from 'react-native'
 import PropTypes from 'prop-types'
+import Sound from 'react-native-sound'
 
 import metrics from '../config/metrics'
 
@@ -12,10 +13,27 @@ export default class MusicItem extends Component {
 		albumArt: PropTypes.string.isRequired
 	}
 
+	play() {
+		let music = new Sound(this.props.path, '', (error) => {
+			if (error) {
+				console.log(error)
+				return
+			}
+			console.log(music.isLoaded())
+			music.play((success) => {
+				if (success) {
+					alert('Finished playing')
+				} else {
+					console.log('error in playing')
+				}
+			})
+		})
+	}
+
 	render() {
 		const { title, artist, albumArt } = this.props
 		return (
-			<View style={styles.container}>
+			<TouchableOpacity style={styles.container} onPress={() => this.play()}>
 				<Image 
 					source={{ uri: albumArt }}
 					style={styles.albumArt}
@@ -28,7 +46,7 @@ export default class MusicItem extends Component {
 						<Text style={{ color: 'black', fontSize: 15 }}>{artist}</Text>
 					</View>
 				</View>
-			</View>
+			</TouchableOpacity>
 		)
 	}
 
