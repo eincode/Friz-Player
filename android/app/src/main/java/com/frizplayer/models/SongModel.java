@@ -15,14 +15,20 @@ public class SongModel {
     private String album;
     private String albumArt;
     private long songDuration;
+    private String path;
 
-    public SongModel(long id, String title, String artist, String album, long songDuration) {
+    public SongModel(long id, String title, String artist, String album, long songDuration, String path) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.albumArt = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), this.id).toString();
         this.songDuration = songDuration;
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public long getId() {
