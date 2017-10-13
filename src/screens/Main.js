@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, FlatList } from 'react-native'
+import Sound from 'react-native-sound'
+import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, StatusBar, TouchableNativeFeedback } from 'react-native'
 
 import { TabNavigator } from 'react-navigation'
 
 import store from '../services/store'
+import { connect } from 'react-redux'
 import { setRootNavigator, setSongsData } from '../services/action'
 
 import MusicBrowserModule from '../modules/modules'
 
 import metrics from '../config/metrics'
-
-import MusicItem from '../components/MusicItem'
 
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -23,30 +23,31 @@ const Tab = TabNavigator({
 		screen: Artists
 	},
 	Albums: {
-		screen: Artists
+		screen: Albums
 	},
 	Songs: {
 		screen: Songs
 	}
 }, {
-	navigationOptions: {
-		tabBarVisible: false
-	}
+		navigationOptions: {
+			tabBarVisible: false
+		}
+
 	})
 
-export default class Main extends Component {
+class Main extends Component {
 
 	constructor(props) {
 		super(props)
 		this.state = {
-			activeTab: 'album',
+			activeTab: 'Artists',
 			data: null,
-			isPlaying: store.getState().isPlaying,
+			isPlaying: false,
 			isPause: false,
 			playing: {
+				albumArt: '',
 				title: '',
-				artist: '',
-				albumArt: ''
+				artist: ''
 			}
 		}
 	}
@@ -54,26 +55,15 @@ export default class Main extends Component {
 	componentDidMount() {
 		store.dispatch(setRootNavigator(this.props.navigation))
 		MusicBrowserModule.retreiveSongs((json) => {
-			//console.log(json)
 			store.dispatch(setSongsData(JSON.parse(json)))
 		})
-		console.log(this.state.isPlaying)
-		setInterval(() => {
-			this.setState({
-				isPlaying: store.getState().isPlaying,
-				playing: store.getState().song
-			})
-		}
-
-			, 1000)
+		Sound.setCategory('Playback')
 	}
-
-	componentWillReceiveProps() {
+	componentWillReceiveProps(nextProps) {
 		this.setState({
-			isPlaying: store.getState().isPlaying,
-			playing: store.getState().song
+			isPlaying: nextProps.isPlaying,
+			playing: nextProps.song
 		})
-		console.log('succes')
 	}
 	renderPlay() {
 		return (
@@ -99,9 +89,21 @@ export default class Main extends Component {
 					</View>
 				</View>
 				<View style={styles.playButtons}>
-					<Icon name='ios-skip-backward-outline' size={30} color='white' />
-					<Icon name={this.state.isPause ? 'ios-play-outline' : 'ios-pause-outline'} size={30} color='white' onPress={() => this.setState({ isPause: !this.state.isPause })} />
-					<Icon name='ios-skip-forward-outline' size={30} color='white' />
+					<TouchableNativeFeedback>
+						<View style={styles.buttons}>
+							<Icon name='ios-skip-backward-outline' size={30} color='white' />
+						</View>
+					</TouchableNativeFeedback>
+					<TouchableNativeFeedback  onPress={() => this.setState({ isPause: !this.state.isPause })} >
+						<View style={styles.buttons}>
+							<Icon name={this.state.isPause ? 'ios-play-outline' : 'ios-pause-outline'} size={30} color='white'/>
+						</View>
+					</TouchableNativeFeedback>
+					<TouchableNativeFeedback>
+						<View style={styles.buttons}>
+							<Icon name='ios-skip-forward-outline' size={30} color='white' />
+						</View>
+					</TouchableNativeFeedback>
 				</View>
 			</View >
 		)
@@ -110,6 +112,7 @@ export default class Main extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
+				<StatusBar barStyle='dark-content' backgroundColor="white" />
 				<View style={styles.contentContainer}>
 					<Image
 						source={require('../../assets/icons/menu.png')}
@@ -117,26 +120,35 @@ export default class Main extends Component {
 					/>
 					<Text style={styles.title}>
 						Collection
-				</Text>
+					</Text>
 					<View style={styles.tabsContainer}>
-						<TouchableWithoutFeedback style={styles.tabs} onPress={() => console.log(store.getState().isPlaying)}>
+						<TouchableWithoutFeedback style={styles.tabs} onPress={() => {
+							this.setState({ activeTab: 'Artists' })
+							this.props.tabNavigator.navigate('Artists')
+						}}>
 							<View>
-								<Text style={[styles.tabsText, this.state.activeTab == 'artist' ? { color: 'black' } : { color: 'grey' }]}>Artist</Text>
+								<Text style={[styles.tabsText, this.state.activeTab == 'Artists' ? { color: 'black' } : { color: 'grey' }]}>Artist</Text>
 							</View>
 						</TouchableWithoutFeedback>
-						<TouchableWithoutFeedback style={styles.tabs} onPress={() => this.setState({ activeTab: 'album' })}>
+						<TouchableWithoutFeedback style={styles.tabs} onPress={() => {
+							this.setState({ activeTab: 'Albums' })
+							this.props.tabNavigator.navigate('Albums')
+						}}>
 							<View>
-								<Text style={[styles.tabsText, this.state.activeTab == 'album' ? { color: 'black' } : { color: 'grey' }]}>Albums</Text>
+								<Text style={[styles.tabsText, this.state.activeTab == 'Albums' ? { color: 'black' } : { color: 'grey' }]}>Albums</Text>
 							</View>
 						</TouchableWithoutFeedback>
-						<TouchableWithoutFeedback style={styles.tabs} onPress={() => this.setState({ activeTab: 'song' })}>
+						<TouchableWithoutFeedback style={styles.tabs} onPress={() => {
+							this.setState({ activeTab: 'Songs' })
+							this.props.tabNavigator.navigate('Songs')
+						}}>
 							<View>
-								<Text style={[styles.tabsText, this.state.activeTab == 'song' ? { color: 'black' } : { color: 'grey' }]}>Songs</Text>
+								<Text style={[styles.tabsText, this.state.activeTab == 'Songs' ? { color: 'black' } : { color: 'grey' }]}>Songs</Text>
 							</View>
 						</TouchableWithoutFeedback>
 					</View>
 					<View style={styles.listContainer}>
-						<Tab />
+						<Tab onNavigationStateChange={(prev, next) => this.setState({ activeTab: next.routes[next.index].key })} />
 					</View>
 				</View>
 				{
@@ -201,7 +213,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	playContainer: {
-		flex: .2,
+		flex: .3,
 		backgroundColor: '#22313F',
 		bottom: 0,
 	},
@@ -229,7 +241,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		paddingHorizontal: 100
+		paddingHorizontal: 100,
+		alignItems: 'center',
 	},
 	musicContainerButton: {
 		flex: .2,
@@ -237,5 +250,20 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		flexDirection: 'row',
 		paddingHorizontal: 40,
+	},
+	buttons: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		padding: 10,
 	}
 })
+function mapStateToProps(state) {
+	return {
+		isPlaying: state.isPlaying,
+		song: state.song,
+		tabNavigator: state.tabNavigator
+	}
+}
+
+export default connect(mapStateToProps)(Main)

@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, FlatList } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 
 import store from '../services/store'
-import { setRootNavigator } from '../services/action'
-
-import MusicBrowserModule from '../modules/modules'
+import { setTabNavigator } from '../services/action'
 
 import metrics from '../config/metrics'
 
-import MusicItem from '../components/MusicItem'
+import { connect } from 'react-redux'
 
-import Icon from 'react-native-vector-icons/Ionicons'
-
-export default class Artists extends Component {
+class Artists extends Component {
 
 	constructor(props) {
 		super(props)
@@ -29,11 +25,11 @@ export default class Artists extends Component {
 	}
 
 	componentDidMount() {
-		MusicBrowserModule.retreiveSongs((json) => {
-			this.setState({ data: store.getState().data})
-		})
+		store.dispatch(setTabNavigator(this.props.navigation))
 	}
-
+	componentWillReceiveProps(nextProps){
+		this.setState({data: nextProps.data})
+	}
 	render() {
 		return (
 			<View>
@@ -136,3 +132,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 40,
 	}
 })
+function mapStateToProps(state) {
+	return {
+		data: state.data
+	}
+}
+
+export default connect(mapStateToProps)(Artists)

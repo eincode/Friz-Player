@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableWithoutFeedback, FlatList } from 'react-native'
+import { View, StyleSheet, FlatList } from 'react-native'
 
 import store from '../services/store'
-import { setRootNavigator, setSongsData, setIsPlaying, setPlayingSong } from '../services/action'
+import { setIsPlaying, setPlayingSong } from '../services/action'
 
-import MusicBrowserModule from '../modules/modules'
 
 import metrics from '../config/metrics'
 
+import { connect } from 'react-redux'
+
 import MusicItem from '../components/MusicItem'
 
-import Icon from 'react-native-vector-icons/Ionicons'
 
-export default class Songs extends Component {
+class Songs extends Component {
 
 	constructor(props) {
 		super(props)
@@ -28,14 +28,8 @@ export default class Songs extends Component {
 		}
 	}
 
-	componentDidMount() {
-		store.dispatch(setRootNavigator(this.props.navigation))
-		MusicBrowserModule.retreiveSongs((json) => {
-			//console.log(json)
-			store.dispatch(setSongsData(JSON.parse(json)))
-			//console.log(store.getState().data)
-			this.setState({ data: store.getState().data })
-		})
+	componentWillReceiveProps(nextProps) {
+		this.setState({ data: nextProps.data })
 	}
 
 	render() {
@@ -169,3 +163,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 40,
 	}
 })
+function mapStateToProps(state) {
+	return {
+		data: state.data
+	}
+}
+
+export default connect(mapStateToProps)(Songs)
