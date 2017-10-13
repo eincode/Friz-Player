@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Image, Text, StyleSheet } from 'react-native'
+import { View, Image, Text, StyleSheet, TouchableNativeFeedback } from 'react-native'
 import PropTypes from 'prop-types'
 
 import metrics from '../config/metrics'
@@ -13,22 +13,24 @@ export default class MusicItem extends Component {
 	}
 
 	render() {
-		const { title, artist, albumArt } = this.props
+		const { title, artist, albumArt, ...props } = this.props
 		return (
-			<View style={styles.container}>
-				<Image 
-					source={{ uri: albumArt }}
-					style={styles.albumArt}
-				/>
-				<View style={styles.text}>
-					<View style={{ justifyContent: 'center' }}>
-						<Text style={{ fontWeight: 'bold', color: 'black', fontSize: 20 }}>{title}</Text>
-					</View>
-					<View style={{ justifyContent: 'center' }}>
-						<Text style={{ color: 'black', fontSize: 15 }}>{artist}</Text>
+			<TouchableNativeFeedback {...props}>
+				<View style={styles.container}>
+					<Image
+						source={{ uri: albumArt }}
+						style={styles.albumArt}
+					/>
+					<View style={styles.text}>
+						<View style={{ justifyContent: 'center' }}>
+							<Text style={{ fontWeight: 'bold', color: 'black', fontSize: 20 }}>{title}</Text>
+						</View>
+						<View style={{ justifyContent: 'center' }}>
+							<Text style={{ color: 'black', fontSize: 15 }}>{artist}</Text>
+						</View>
 					</View>
 				</View>
-			</View>
+			</TouchableNativeFeedback>
 		)
 	}
 
