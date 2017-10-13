@@ -11,6 +11,7 @@ import { connect } from 'react-redux'
 
 import MusicItem from '../components/MusicItem'
 
+import * as Music from '../services/music'
 
 class Songs extends Component {
 
@@ -40,7 +41,7 @@ class Songs extends Component {
 					<FlatList
 						style={{ flex: 1 }}
 						data={this.state.data}
-						renderItem={({ item }) => {
+						renderItem={({ item,index }) => {
 							return (
 								<MusicItem
 									title={item.title}
@@ -58,6 +59,7 @@ class Songs extends Component {
 										}
 										store.dispatch(setIsPlaying(true))
 										store.dispatch(setPlayingSong(playing))
+										Music.playSong(index, Music.nextSong())
 									}}
 								/>
 							)

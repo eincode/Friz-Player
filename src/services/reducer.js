@@ -4,12 +4,12 @@ import { SET_ROOT_NAVIGATOR, SET_PLAYING_SONG, SET_SONGS_DATA, SET_IS_PLAYING, S
 
 function rootNavigator(state = null, action) {
 	switch (action.type) {
-	case SET_ROOT_NAVIGATOR: {
-		return action.rootNavigator
-	}
-	default: {
-		return state
-	}
+		case SET_ROOT_NAVIGATOR: {
+			return action.rootNavigator
+		}
+		default: {
+			return state
+		}
 	}
 }
 function tabNavigator(state = null, action) {
@@ -22,7 +22,7 @@ function tabNavigator(state = null, action) {
 		}
 	}
 }
-function song(state = null, action) {
+function song(state = { albumArt: '', title: '', artist: '' }, action) {
 	switch (action.type) {
 		case SET_PLAYING_SONG: {
 			return action.song

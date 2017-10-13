@@ -10,9 +10,13 @@ import { setRootNavigator, setSongsData } from '../services/action'
 
 import MusicBrowserModule from '../modules/modules'
 
+import Display from 'react-native-display'
+
 import metrics from '../config/metrics'
 
 import Icon from 'react-native-vector-icons/Ionicons'
+
+import * as Music from '../services/music'
 
 import Artists from '../screens/Artists'
 import Albums from '../screens/Albums'
@@ -32,7 +36,6 @@ const Tab = TabNavigator({
 		navigationOptions: {
 			tabBarVisible: false
 		}
-
 	})
 
 class Main extends Component {
@@ -56,6 +59,7 @@ class Main extends Component {
 		store.dispatch(setRootNavigator(this.props.navigation))
 		MusicBrowserModule.retreiveSongs((json) => {
 			store.dispatch(setSongsData(JSON.parse(json)))
+			Music.initializePlayer(JSON.parse(json))
 		})
 		Sound.setCategory('Playback')
 	}
@@ -89,17 +93,21 @@ class Main extends Component {
 					</View>
 				</View>
 				<View style={styles.playButtons}>
-					<TouchableNativeFeedback>
+					<TouchableNativeFeedback onPress={()=>Music.previousSong()}>
 						<View style={styles.buttons}>
 							<Icon name='ios-skip-backward-outline' size={30} color='white' />
 						</View>
 					</TouchableNativeFeedback>
-					<TouchableNativeFeedback  onPress={() => this.setState({ isPause: !this.state.isPause })} >
+					<TouchableNativeFeedback onPress={() => {
+						if(this.state.isPause) Music.resume()
+						else Music.pause()
+						this.setState({ isPause: !this.state.isPause })
+					}} >
 						<View style={styles.buttons}>
-							<Icon name={this.state.isPause ? 'ios-play-outline' : 'ios-pause-outline'} size={30} color='white'/>
+							<Icon name={this.state.isPause ? 'ios-play-outline' : 'ios-pause-outline'} size={30} color='white' />
 						</View>
 					</TouchableNativeFeedback>
-					<TouchableNativeFeedback>
+					<TouchableNativeFeedback onPress={()=>Music.nextSong()}>
 						<View style={styles.buttons}>
 							<Icon name='ios-skip-forward-outline' size={30} color='white' />
 						</View>
@@ -151,9 +159,17 @@ class Main extends Component {
 						<Tab onNavigationStateChange={(prev, next) => this.setState({ activeTab: next.routes[next.index].key })} />
 					</View>
 				</View>
-				{
-					this.state.isPlaying ? this.renderPlay() : null
-				}
+				<Display
+					enable={this.state.isPlaying}
+					enterDuration={500}
+					exitDuration={250}
+					exit="fadeOutDown"
+					enter="fadeInUp"
+				>
+					{
+						this.renderPlay()
+					}
+				</Display>
 			</View>
 		)
 	}
@@ -213,7 +229,8 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	playContainer: {
-		flex: .3,
+		width: metrics.DEVICE_WIDTH,
+		height: metrics.DEVICE_HEIGHT * 0.2,
 		backgroundColor: '#22313F',
 		bottom: 0,
 	},

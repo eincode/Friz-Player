@@ -12,12 +12,15 @@ const initializePlayer = (musics) => {
 
 //Play the song with index parameter from the playlist
 const playSong = (index, onFinishedPlaying) => {
+	if (music != null) {
+		music.stop()
+	}
 	music = new Sound(playlist[index].path, '', (error) => {
 		if (error) {
 			Alert.alert('Error', 'Error playing music')
 		}
+		currentIndexPlaying = index
 		music.play(() => {
-			currentIndexPlaying = index
 			onFinishedPlaying()
 		})
 	})
@@ -32,15 +35,15 @@ const stopSong = (cb) => {
 
 //Play the next song from the playlist
 const nextSong = () => {
-	this.stopSong(() => {
-		this.playSong(++currentIndexPlaying)
+	stopSong(() => {
+		playSong(++currentIndexPlaying)
 	})
 }
 
 //Play the previous song from the playlist
 const previousSong = () => {
-	this.stopSong(() => {
-		this.playSong(--currentIndexPlaying)
+	stopSong(() => {
+		playSong(--currentIndexPlaying)
 	})
 }
 
