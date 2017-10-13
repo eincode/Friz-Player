@@ -5,11 +5,9 @@ import { Provider } from 'react-redux'
 import store from './src/services/store'
 
 import Main from './src/screens/Main'
-import Bla from './src/screens/Bla'
 
 const rootNavigator = StackNavigator({
-	main: { screen: Main },
-	bla: { screen: Bla }
+	main: { screen: Main }
 }, {
 	navigationOptions: {
 		header: null
